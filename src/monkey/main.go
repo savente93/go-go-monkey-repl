@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"monkey/lexer"
+)
 
 func main() {
-	fmt.Println("Hello world!")
+	lexer := lexer.New("a + b")
+	fmt.Println(lexer)
 }
