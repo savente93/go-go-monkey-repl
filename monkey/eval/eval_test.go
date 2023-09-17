@@ -52,7 +52,7 @@ func testEval(input string) object.Object {
 func testIntegerObject(t *testing.T, i int, obj object.Object, expected int64) bool {
 	result, ok := obj.(*object.Integer)
 	if !ok {
-		t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
+		t.Errorf("object of test %v is not Integer. got=%T (%+v)", i, obj, obj)
 		return false
 	}
 	if result.Value != expected {
