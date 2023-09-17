@@ -1,6 +1,7 @@
 package eval
 
 import (
+	"fmt"
 	"monkey/lexer"
 	"monkey/object"
 	"monkey/parser"
@@ -30,6 +31,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}
 
 	for i, tt := range tests {
+		fmt.Println(tt.input)
 		evaluated := testEval(tt.input)
 		testIntegerObject(t, i, evaluated, tt.expected)
 	}
@@ -82,22 +84,25 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"(1> 2) == false", true},
 	}
 
-	for _, tt := range tests {
+	for i, tt := range tests {
 		evaluated := testEval(tt.input)
-		testBooleanObject(t, evaluated, tt.expected)
+		p := testBooleanObject(t, i, evaluated, tt.expected)
+		if !p {
+			t.Errorf("%v", tt.input)
+		}
 	}
 }
 
-func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
+func testBooleanObject(t *testing.T, i int, obj object.Object, expected bool) bool {
 	result, ok := obj.(*object.Boolean)
 
 	if !ok {
-		t.Errorf("object is not Boolean. got=%T (+%v)", obj, obj)
+		t.Errorf("object of test %v is not Boolean. got=%T (+%v)", i, obj, obj)
 		return false
 	}
 
 	if result.Value != expected {
-		t.Errorf("object has wrong value. got=%t, want=%t", result.Value, expected)
+		t.Errorf("object of test %v has wrong value. got=%t, want=%t", i, result.Value, expected)
 		return false
 	}
 	return true
@@ -117,9 +122,73 @@ func TestBangOperator(t *testing.T) {
 		{"!!5", true},
 	}
 
-	for _, tt := range tests {
+	for i, tt := range tests {
 		evaluated := testEval(tt.input)
-		testBooleanObject(t, evaluated, tt.expected)
+		testBooleanObject(t, i, evaluated, tt.expected)
 
+	}
+}
+
+func TestIfElseExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{"if (true) {10}", 10},
+		{"if (false) {10}", nil},
+		{"if (1) { 10 }", 10},
+		{"if (1<2){ 10}", 10},
+		{"if (1 > 2) { 10 }", nil},
+		{"if (1 > 2) { 10 } else { 20 }", 20},
+		{"if (1 < 2) { 10 } else { 20 }", 10},
+	}
+
+	for i, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, i, evaluated, int64(integer))
+		} else {
+			testNullObject(t, i, evaluated)
+		}
+	}
+
+}
+
+func testNullObject(t *testing.T, i int, obj object.Object) bool {
+	if obj != NULL {
+		t.Errorf("object of test %v is not NULL. got=%T (%+v)", i, obj, obj)
+		return false
+	}
+
+	return true
+}
+
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"return 10;", 10},
+		{"return 10; 9;", 10},
+		{"return 2*5; 9;", 10},
+		{"9; return 2*5; 9;", 10},
+		{
+			`
+if (10 > 1) {
+	if (10 > 1) {
+		return 10;
+	}
+
+	return 1;
+}
+`,
+			10,
+		},
+	}
+
+	for i, tt := range tests {
+		evaluated := testEval(tt.input)
+		testIntegerObject(t, i, evaluated, tt.expected)
 	}
 }
