@@ -14,7 +14,10 @@ var (
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
-
+	case *ast.FunctionLiteral:
+		params := node.Parameters
+		body := node.Body
+		return &object.Function{Parameters: params, Env: env, Body: body}
 	case *ast.LetStatement:
 		val := Eval(node.Value, env)
 		if isError(val) {
