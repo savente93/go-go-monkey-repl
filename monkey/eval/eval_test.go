@@ -293,6 +293,23 @@ func TestLetStatements(t *testing.T) {
 	}
 }
 
+func TestWhileStatements(t *testing.T) {
+	tests := []struct {
+		input          string
+		expected_loops int64
+	}{
+		{"let a = 5;let counter = 0; while(a < 10){let counter = counter + 1; let a = a + 1;};counter;", 5},
+		{"let a = 5;let counter = 0; while(a < 3){let counter = counter + 1; let a = a + 1;};counter;", 0},
+		{"let a = 10;let counter = 0; while(a < 5){let counter = counter + 1};counter;", 0},
+		{"let a = 0;let counter = 0; while(a < 5){let counter = counter + 1; let a = 20};counter;", 1},
+		{"let a = 5;let j = 10;let counter = 0; while(a < j){let counter = counter +1;let a = a + 1;};counter;", 5},
+	}
+
+	for i, tt := range tests {
+		testIntegerObject(t, i, testEval(tt.input), tt.expected_loops)
+	}
+}
+
 func TestFunctionObject(t *testing.T) {
 	input := "fn(x) { x + 2; };"
 

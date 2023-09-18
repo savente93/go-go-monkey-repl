@@ -73,6 +73,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return val
 		}
 		return &object.ReturnValue{Value: val}
+	case *ast.WhileStatement:
+		return evalWhileStatement(node, env)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 	case *ast.InfixExpression:
@@ -110,6 +112,25 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 
 	}
 
+}
+
+func evalWhileStatement(ws *ast.WhileStatement, env *object.Environment) object.Object {
+
+	var returnValue object.Object
+	for {
+		condReturn := Eval(ws.Conditional, env)
+		if isError(condReturn) {
+			return newError("Error occured during conditioun evaluation")
+		}
+		if !isTruthy(condReturn) {
+			break
+		}
+		returnValue = Eval(&ws.Body, env)
+		if isError(returnValue) {
+			return newError("Error occured during body eval.")
+		}
+	}
+	return returnValue
 }
 
 func extendedFunctionEnv(
