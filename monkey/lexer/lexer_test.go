@@ -30,7 +30,8 @@ if (5 < 10) {
 "foo bar"
 [1,2];
 foo[a];
-{"foo":"bar"}
+{"foo":"bar"};
+while(true,5);
 `
 
 	tests := []struct {
@@ -128,6 +129,14 @@ foo[a];
 		{token.COLON, ":"},
 		{token.STRING, "bar"},
 		{token.RBRACE, "}"},
+		{token.SEMICOLON, ";"},
+		{token.WHILE, "while"},
+		{token.LPAREN, "("},
+		{token.TRUE, "true"},
+		{token.COMMA, ","},
+		{token.INT, "5"},
+		{token.RPAREN, ")"},
+		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
 

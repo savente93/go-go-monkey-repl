@@ -159,6 +159,24 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
+type WhileStatement struct {
+	Token       token.Token
+	Conditional Expression
+	Body        BlockStatement
+}
+
+func (ws *WhileStatement) statementNode()       {}
+func (ws *WhileStatement) TokenLiteral() string { return ws.Token.Literal }
+func (ws *WhileStatement) String() string {
+	var out bytes.Buffer
+
+	for _, s := range bs.Statements {
+		out.WriteString(s.String())
+	}
+
+	return out.String()
+}
+
 type ExpressionStatement struct {
 	Token      token.Token
 	Expression Expression

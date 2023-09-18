@@ -3,9 +3,8 @@ package token
 type TokenType string
 
 const (
-	ILLEGAL = "ILLEGAL"
-	EOF     = "EOF"
-
+	ILLEGAL   = "ILLEGAL"
+	EOF       = "EOF"
 	IDENT     = "IDENT"
 	INT       = "INT"
 	ASSIGN    = "="
@@ -35,6 +34,7 @@ const (
 	LBRACKET  = "["
 	RBRACKET  = "]"
 	COLON     = ":"
+	WHILE     = "while"
 )
 
 type Token struct {
@@ -50,6 +50,7 @@ var keywords = map[string]TokenType{
 	"if":     IF,
 	"else":   ELSE,
 	"return": RETURN,
+	"while":  WHILE,
 }
 
 func LookupIdent(ident string) TokenType {
