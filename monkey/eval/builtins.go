@@ -114,24 +114,38 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: newElements}
 		},
 	},
-	// TODO: finish
-	// "range": {Fn: func(args ...object.Object) object.Object {
-	// 	if len(args) != 1 {
-	// 		return newError("wrong number of arguments. got=%d, want=1",
-	// 			len(args))
-	// 	}
+	"iter": {Fn: func(args ...object.Object) object.Object {
+		if len(args) != 1 {
+			return newError("wrong number of arguments. got=%d, want=1",
+				len(args))
+		}
 
-	// 	switch arg := args[0].(type) {
-	// 	case *object.Array:
-	// 		return &object.Array{Value: int64(len(arg.Elements))}
-	// 	case *object.Hash:
-	// 		return &object.Array{Value: int64(len(arg.Elements))}
-	// 	case *object.String:
-	// 		return &object.Array{Value: int64(len(arg.Value))}
-	// 	default:
-	// 		return newError("argument to `len` not supported, got %s",
-	// 			args[0].Type())
-	// 	}
-	// },
-	// },
+		switch arg := args[0].(type) {
+		case *object.Array:
+			return arg
+		case *object.Hash:
+
+			if len(arg.Pairs) == 0 {
+				return NULL
+			}
+			arr := []object.Object{}
+
+			for _, pair := range arg.Pairs {
+				arr = append(arr, pair.Key)
+			}
+
+			return &object.Array{Elements: arr}
+		case *object.String:
+			arr := []object.Object{}
+
+			for _, char := range arg.Value {
+				arr = append(arr, &object.String{Value: string(char)})
+			}
+			return &object.Array{Elements: arr}
+		default:
+			return newError("argument to `iter` not supported, got %s",
+				args[0].Type())
+		}
+	},
+	},
 }

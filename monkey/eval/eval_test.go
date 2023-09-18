@@ -62,6 +62,19 @@ func testIntegerObject(t *testing.T, i int, obj object.Object, expected int64) b
 	return true
 }
 
+func testStringObject(t *testing.T, i int, obj object.Object, expected string) bool {
+	result, ok := obj.(*object.String)
+	if !ok {
+		t.Errorf("object of test %v is not String. got=%T (%+v)", i, obj, obj)
+		return false
+	}
+	if result.Value != expected {
+		t.Errorf("object of test %v has wrong value. got=%v, want=%v", i, result.Value, expected)
+		return false
+	}
+	return true
+}
+
 func TestEvalBooleanExpression(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -450,9 +463,9 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`rest([])`, nil},
 		{`push([], 1)`, []int{1}},
 		{`push(1, 1)`, "argument to `push` must be ARRAY, got INTEGER"},
-		{`range({})`, nil},
-		{`range({"foo":"bar"})`, []string{}},
-		{`range()`, nil},
+		{`iter({})`, nil},
+		{`iter({"foo":"bar", "meow":"arf"})`, []string{"foo", "meow"}},
+		{`iter("foo: bar, meow: arf")`, []string{"f", "o", "o", ":", " ", "b", "a", "r", ",", " ", "m", "e", "o", "w", ":", " ", "a", "r", "f"}},
 	}
 
 	for i, tt := range tests {
@@ -489,6 +502,23 @@ func TestBuiltinFunctions(t *testing.T) {
 
 			for i, expectedElem := range expected {
 				testIntegerObject(t, i, array.Elements[i], int64(expectedElem))
+			}
+
+		case []string:
+			array, ok := evaluated.(*object.Array)
+			if !ok {
+				t.Errorf("obj not Array. got=%T (%+v)", evaluated, evaluated)
+				continue
+			}
+
+			if len(array.Elements) != len(expected) {
+				t.Errorf("wrong num of elements in %v (test %d). want=%d, got=%d",
+					array.Elements, i, len(expected), len(array.Elements))
+				continue
+			}
+
+			for i, expectedElem := range expected {
+				testStringObject(t, i, array.Elements[i], expectedElem)
 			}
 		}
 	}
