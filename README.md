@@ -1,6 +1,6 @@
 # go-go-monkey-repl
 
-This is my implementation of the "monkey" langugue interpreter. I made this by following along the wonderful book (Writing an Interpreter in Go)[https://interpreterbook.com] by Thorsten Ball. I made a few extentions of my own after finishing, but the bulk of the credit goes to him!
+This is my implementation of the "monkey" langugue interpreter. I made this by following along the wonderful book [Writing an Interpreter in Go](https://interpreterbook.com) by Thorsten Ball. I made a few extentions of my own after finishing, but the bulk of the credit goes to him!
 
 I may play keep playing around with this, but know that it is a toy language, and you should not expect any kind of support if you choose to use it for anything. Though, it is licensed under MIT so there's nothing stoping you from doing that, other than the knowledge that you'll be on your own.
 
