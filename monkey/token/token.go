@@ -34,7 +34,7 @@ const (
 	LBRACKET  = "["
 	RBRACKET  = "]"
 	COLON     = ":"
-	WHILE     = "while"
+	WHILE     = "WHILE"
 )
 
 type Token struct {

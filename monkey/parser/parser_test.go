@@ -555,6 +555,39 @@ func TestFunctionLiteralParsing(t *testing.T) {
 
 	testInfixExpression(t, bodyStmt.Expression, "x", "+", "y")
 }
+func TestWhileStatmentParsing(t *testing.T) {
+	input := `while(i < 5) { let i = i + 1; }`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program.Statements does not contain %d statements. got=%d\n",
+			1, len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.WhileStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.WhileStatement . got=%T",
+			program.Statements[0])
+	}
+
+	conditional, ok := stmt.Conditional.(ast.Expression)
+	if !ok {
+		t.Fatalf("stmt.Expression is not ast.FunctionLiteral. got=%T",
+			stmt.Conditional)
+	}
+
+	if len(stmt.Body.Statements) != 1 {
+		t.Fatalf("function literal parameters wrong. want 1, got=%d\n",
+			len(stmt.Body.Statements))
+	}
+
+	testInfixExpression(t, conditional, "i", "<", 5)
+	testLetStatement(t, stmt.Body.Statements[0], "i")
+}
 
 func TestFunctionParameterParsing(t *testing.T) {
 	tests := []struct {

@@ -170,10 +170,15 @@ func (ws *WhileStatement) TokenLiteral() string { return ws.Token.Literal }
 func (ws *WhileStatement) String() string {
 	var out bytes.Buffer
 
-	for _, s := range bs.Statements {
-		out.WriteString(s.String())
-	}
+	out.WriteString(ws.TokenLiteral())
+	out.WriteString("(")
+	out.WriteString(ws.Conditional.String())
+	out.WriteString(")")
+	out.WriteString("{")
+	out.WriteString(ws.Body.String())
 
+	out.WriteString("}")
+	out.WriteString(";")
 	return out.String()
 }
 
