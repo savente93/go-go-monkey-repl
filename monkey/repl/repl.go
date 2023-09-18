@@ -8,6 +8,7 @@ import (
 	"monkey/lexer"
 	"monkey/object"
 	"monkey/parser"
+	"strings"
 )
 
 const PROMPT = ">> "
@@ -24,6 +25,9 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		line := scanner.Text()
+		if strings.TrimSpace(line) == "quit" {
+			break
+		}
 		l := lexer.New(line)
 		p := parser.New(l)
 
