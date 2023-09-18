@@ -19,3 +19,4 @@ Other than that, there's not that much to say, other than thank you the Thorsten
 ## Extentions
 - 2023-09-18: ability to gracefully exit the repl with the `quit` command.
 - 2023-09-18: `iter` builtin function. It gives you an array containing the individual characters when called on a string, and an array with the keys when called on a hash (dictionary). It just returns arrays since loops arent's implemented yet (though I plan to implement at least one) and you can faux iterate over arrays using the builtin `first` function. 
+- 2023-09-18: Add implementation for `while` loops. :D
