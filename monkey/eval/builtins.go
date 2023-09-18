@@ -1,4 +1,4 @@
-package evaluator
+package eval
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 var builtins = map[string]*object.Builtin{
-	"len": &object.Builtin{Fn: func(args ...object.Object) object.Object {
+	"len": {Fn: func(args ...object.Object) object.Object {
 		if len(args) != 1 {
 			return newError("wrong number of arguments. got=%d, want=1",
 				len(args))
@@ -23,7 +23,7 @@ var builtins = map[string]*object.Builtin{
 		}
 	},
 	},
-	"puts": &object.Builtin{
+	"puts": {
 		Fn: func(args ...object.Object) object.Object {
 			for _, arg := range args {
 				fmt.Println(arg.Inspect())
@@ -32,7 +32,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"first": &object.Builtin{
+	"first": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -51,7 +51,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"last": &object.Builtin{
+	"last": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -71,7 +71,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"rest": &object.Builtin{
+	"rest": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -93,7 +93,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"push": &object.Builtin{
+	"push": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 2 {
 				return newError("wrong number of arguments. got=%d, want=2",
@@ -114,4 +114,24 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: newElements}
 		},
 	},
+	// TODO: finish
+	// "range": {Fn: func(args ...object.Object) object.Object {
+	// 	if len(args) != 1 {
+	// 		return newError("wrong number of arguments. got=%d, want=1",
+	// 			len(args))
+	// 	}
+
+	// 	switch arg := args[0].(type) {
+	// 	case *object.Array:
+	// 		return &object.Array{Value: int64(len(arg.Elements))}
+	// 	case *object.Hash:
+	// 		return &object.Array{Value: int64(len(arg.Elements))}
+	// 	case *object.String:
+	// 		return &object.Array{Value: int64(len(arg.Value))}
+	// 	default:
+	// 		return newError("argument to `len` not supported, got %s",
+	// 			args[0].Type())
+	// 	}
+	// },
+	// },
 }

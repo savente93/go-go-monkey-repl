@@ -34,6 +34,7 @@ const (
 	STRING    = "STRING"
 	LBRACKET  = "["
 	RBRACKET  = "]"
+	COLON     = ":"
 )
 
 type Token struct {
