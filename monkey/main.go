@@ -13,7 +13,14 @@ func main() {
 		panic(err)
 	}
 	if len(os.Args) > 1 {
-		repl.Run(os.Args[1], os.Stdout)
+		fp := os.Args[1]
+		if _, err := os.Stat(fp); err == nil {
+			repl.Run(fp, os.Stdout)
+
+		} else {
+			fmt.Printf("File %s not found! exiting...", fp)
+
+		}
 
 	} else {
 		fmt.Printf("Hello %s! This is the Monkey programming language!\n",
