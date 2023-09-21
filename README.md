@@ -26,7 +26,7 @@ Other than that, there's not that much to say, other than thank you the Thorsten
 Some ideas I might like to implement some day for fun:
 - [] press up in repl to prefill last command
 - [] allow multiline expressions in repl with use of `\`
-- [] allow reading of monkey script files
+- [x] allow reading of monkey script files
 
 ## A note on copying.
 It's entirely possible you're looking at this repo with the goal of determining how capabale as a dev I am, and am thus worried how much of the code I simply coppied into a repo to seem impressive, and how much of it I actually understand. 
