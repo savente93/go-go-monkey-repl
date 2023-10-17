@@ -28,8 +28,11 @@ func Run(path string, out io.Writer) {
 
 	evaluated, err := exec(content_str, env, macroEnv)
 	if err == nil {
-		io.WriteString(out, evaluated.Inspect())
-		io.WriteString(out, "\n")
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+
+		}
 	} else {
 		io.WriteString(out, err.Error())
 	}
@@ -68,8 +71,11 @@ func Start(in io.Reader, out io.Writer) {
 		}
 		evaluated, err := exec(line, env, macroEnv)
 		if err == nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
+			if evaluated != nil {
+				io.WriteString(out, evaluated.Inspect())
+				io.WriteString(out, "\n")
+
+			}
 		} else {
 			io.WriteString(out, err.Error())
 		}
