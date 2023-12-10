@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"monkey/compiler"
 	"monkey/eval"
 	"monkey/lexer"
 	"monkey/object"
 	"monkey/parser"
+	"monkey/vm"
 	"strings"
 )
 
@@ -53,10 +55,11 @@ func exec(src string, env *object.Environment, macroEnv *object.Environment) (ob
 	return evaluated, nil
 
 }
+
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnvironment()
-	macroEnv := object.NewEnvironment()
+	// env := object.NewEnvironment()
+	// macroEnv := object.NewEnvironment()
 
 	for {
 		fmt.Fprintf(out, PROMPT)
@@ -66,19 +69,45 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		line := scanner.Text()
-		if strings.TrimSpace(line) == "quit" {
+		if strings.TrimSpace(line) == "quit" || strings.TrimSpace(line) == "q" {
 			break
 		}
-		evaluated, err := exec(line, env, macroEnv)
-		if err == nil {
-			if evaluated != nil {
-				io.WriteString(out, evaluated.Inspect())
-				io.WriteString(out, "\n")
 
-			}
-		} else {
-			io.WriteString(out, err.Error())
+		l := lexer.New(line)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			formatParserErrors(p.Errors())
 		}
+
+		comp := compiler.New()
+		err := comp.Compile(program)
+		if err != nil {
+			fmt.Fprintf(out, "whoops! Compilations failed:\n %s\n", err)
+			continue
+		}
+
+		machine := vm.New(comp.Bytecode())
+		err = machine.Run()
+		if err != nil {
+			fmt.Fprintf(out, "whoops exectuing bytecode failed:\n %s\n", err)
+			continue
+		}
+
+		stackTop := machine.StackTop()
+		io.WriteString(out, stackTop.Inspect())
+		io.WriteString(out, "\n")
+
+		// evaluated, err := exec(line, env, macroEnv)
+		// if err == nil {
+		// 	if evaluated != nil {
+		// 		io.WriteString(out, evaluated.Inspect())
+		// 		io.WriteString(out, "\n")
+
+		// 	}
+		// } else {
+		// 	io.WriteString(out, err.Error())
+		// }
 
 	}
 }
