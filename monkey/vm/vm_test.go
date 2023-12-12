@@ -52,10 +52,10 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 			t.Fatalf("vm error: %s", err)
 		}
 
-		stackElm := vm.LastPopedStackElm()
-		testExpectedObject(t, tt.expected, stackElm)
-	}
+		stackElem := vm.LastPoppedStackElem()
 
+		testExpectedObject(t, tt.expected, stackElem)
+	}
 }
 
 func testExpectedObject(
@@ -540,15 +540,15 @@ func TestCallingFunctionsWithWrongArguments(t *testing.T) {
 	tests := []vmTestCase{
 		{
 			input:    `fn() { 1; }(1);`,
-			expected: `Wrong number of arguments: want=0, got=1`,
+			expected: `wrong number of arguments: want=0, got=1`,
 		},
 		{
 			input:    `fn(a) { a; }();`,
-			expected: `Wrong number of arguments: want=1, got=0`,
+			expected: `wrong number of arguments: want=1, got=0`,
 		},
 		{
 			input:    `fn(a, b) { a + b; }(1);`,
-			expected: `Wrong number of arguments: want=2, got=1`,
+			expected: `wrong number of arguments: want=2, got=1`,
 		},
 	}
 
@@ -613,6 +613,58 @@ func TestBuiltinFunctions(t *testing.T) {
 			&object.Error{
 				Message: "argument to `push` must be ARRAY, got INTEGER",
 			},
+		},
+	}
+
+	runVmTests(t, tests)
+}
+
+func TestRecursiveFunctions(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+		let countDown = fn(x) {
+			if (x == 0) {
+				return 0;
+			} else {
+				countDown(x - 1);
+			}
+		};
+		countDown(1);
+		`,
+			expected: 0,
+		},
+		{
+			input: `
+		let countDown = fn(x) {
+			if (x == 0) {
+				return 0;
+			} else {
+				countDown(x - 1);
+			}
+		};
+		let wrapper = fn() {
+			countDown(1);
+		};
+		wrapper();
+		`,
+			expected: 0,
+		},
+		{
+			input: `
+		let wrapper = fn() {
+			let countDown = fn(x) {
+				if (x == 0) {
+					return 0;
+				} else {
+					countDown(x - 1);
+				}
+			};
+			countDown(1);
+		};
+		wrapper();
+		`,
+			expected: 0,
 		},
 	}
 
